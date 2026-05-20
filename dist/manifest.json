@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "Radeion Healthcare Companion",
+  "version": "0.1.0",
+  "description": "Secure healthcare companion extension frontend scaffold.",
+  "action": {
+    "default_popup": "src/ui/popup/index.html",
+    "default_title": "Radeion"
+  },
+  "background": {
+    "service_worker": "service-worker-loader.js",
+    "type": "module"
+  },
+  "options_page": "src/ui/options/index.html",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [],
+  "content_scripts": [
+    {
+      "js": [
+        "assets/index.tsx-loader-yVYGKKUF.js"
+      ],
+      "matches": [
+        "https://example-healthcare-app.invalid/*"
+      ],
+      "run_at": "document_idle",
+      "css": [
+        "assets/renderApp-D94qJf5e.css"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "https://example-healthcare-app.invalid/*"
+      ],
+      "resources": [
+        "assets/*",
+        "assets/renderApp-nbsssCqs.js",
+        "assets/renderApp-nbsssCqs.js.map",
+        "assets/createLucideIcon-CYuvbn3l.js",
+        "assets/createLucideIcon-CYuvbn3l.js.map",
+        "assets/Button-C2FduXKi.js",
+        "assets/Button-C2FduXKi.js.map",
+        "assets/StatusPill-QYQZO9TW.js",
+        "assets/StatusPill-QYQZO9TW.js.map",
+        "assets/index.tsx-Ck4LScKw.js",
+        "assets/index.tsx-Ck4LScKw.js.map"
+      ],
+      "use_dynamic_url": false
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}
