@@ -169,15 +169,16 @@ p {
   border: 1px solid #dce5eb;
   border-radius: 8px;
   box-shadow: 0 16px 48px rgb(23 32 38 / 18%);
-  bottom: 24px;
   display: grid;
   gap: 14px;
-  max-height: calc(100vh - 48px);
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  max-height: calc(100vh - 16px);
+  max-width: calc(100vw - 16px);
+  min-height: 360px;
+  min-width: 340px;
   overflow: hidden;
   padding: 14px;
   position: fixed;
-  right: 24px;
-  width: min(420px, calc(100vw - 32px));
   z-index: 2147483647;
 }
 
@@ -196,6 +197,29 @@ p {
   height: 32px;
   justify-content: center;
   width: 32px;
+}
+
+.icon-button:hover,
+.resize-handle:hover {
+  background: #e5eef3;
+}
+
+.resize-handle {
+  align-items: center;
+  background: #f2f6f8;
+  border: 1px solid #dce5eb;
+  border-bottom: 0;
+  border-radius: 8px 0 0;
+  border-right: 0;
+  bottom: 0;
+  color: #60717d;
+  cursor: nwse-resize;
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  position: absolute;
+  right: 0;
+  width: 30px;
 }
 
 .context-strip {
@@ -229,6 +253,7 @@ p {
 
 .panel-body {
   border-top: 1px solid #edf2f5;
+  overflow: auto;
   padding-top: 14px;
 }
 

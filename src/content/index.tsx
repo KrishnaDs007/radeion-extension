@@ -2,6 +2,7 @@ import { FloatingPanelApp } from "@/ui/floating-panel/FloatingPanelApp";
 import { renderApp } from "@/app/renderApp";
 import { Button } from "@/shared/components/Button";
 import { detectSiteContext } from "@/shared/site/supportedSites";
+import { X } from "lucide-react";
 import { useState } from "react";
 
 const hostId = "radeion-extension-root";
@@ -35,8 +36,8 @@ function ContentApp() {
         <Button onClick={() => setIsOpen(true)} type="button">
           Open
         </Button>
-        <button className="icon-button" onClick={() => setIsClosed(true)} type="button" aria-label="Close prompt">
-          x
+        <button className="icon-button" onClick={() => setIsClosed(true)} type="button" aria-label="Close prompt" title="Close">
+          <X size={16} />
         </button>
       </div>
     </section>
