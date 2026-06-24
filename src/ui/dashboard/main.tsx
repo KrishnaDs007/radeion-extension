@@ -8,6 +8,7 @@ import { useAuthSession } from "@/shared/auth/useAuthSession";
 import { Button } from "@/shared/components/Button";
 import { PageShell } from "@/shared/components/PageShell";
 import { StatusPill } from "@/shared/components/StatusPill";
+import { getAppVersion } from "@/shared/config/appVersion";
 import { searchPatientMetrics } from "@/shared/patient/patientApi";
 import type { PatientDataRow } from "@/shared/patient/patientApi";
 import { savePatientBasicMetadata } from "@/shared/patient/patientMetadataStorage";
@@ -25,7 +26,7 @@ function getDisplayValue(row: PatientDataRow, keys: string[]) {
 }
 
 function DashboardApp() {
-  const { isConfigured, isLoading, user } = useAuthSession();
+  const { isConfigured, isDeveloperBypass, isLoading, user } = useAuthSession();
   const { handleSubmit, register } = useForm<PatientSearchFormValues>();
   const [selectedTab, setSelectedTab] = useState<PatientTabId>("home");
   const [statusMessage, setStatusMessage] = useState("");
@@ -116,7 +117,11 @@ function DashboardApp() {
         <section className="workspace">
           <div className="workspace-header">
             <h2>{patientTabs.find((tab) => tab.id === selectedTab)?.label}</h2>
-            <StatusPill label="Backend ready" tone="success" />
+            <div className="icon-button-row">
+              {isDeveloperBypass ? <StatusPill label="Dev bypass" tone="warning" /> : null}
+              <StatusPill label={`v${getAppVersion()}`} />
+              <StatusPill label="Backend ready" tone="success" />
+            </div>
           </div>
 
           {selectedTab === "home" ? (

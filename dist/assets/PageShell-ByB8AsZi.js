@@ -1,2 +1,0 @@
-import{n as e}from"./renderApp-nbsssCqs.js";var t=e();function n({children:e,eyebrow:n,title:r,subtitle:i}){return(0,t.jsxs)(`main`,{className:`page-shell`,children:[(0,t.jsxs)(`header`,{className:`page-header`,children:[n?(0,t.jsx)(`p`,{className:`eyebrow`,children:n}):null,(0,t.jsx)(`h1`,{children:r}),i?(0,t.jsx)(`p`,{className:`subtitle`,children:i}):null]}),e]})}export{n as t};
-//# sourceMappingURL=PageShell-ByB8AsZi.js.map

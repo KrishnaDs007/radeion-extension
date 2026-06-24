@@ -213,6 +213,23 @@ Before implementation, define:
 
 Use a Vite dev proxy for local backend calls so browser CORS does not block local frontend work.
 
+## Developer Auth Bypass
+
+For local frontend development only, the extension can bypass the frontend login gate when this env value is provided:
+
+```text
+VITE_DEV_AUTH_BYPASS_EMAIL=developer@example.com
+```
+
+Optional:
+
+```text
+VITE_DEV_AUTH_BYPASS_NAME=Developer
+VITE_DEV_AUTH_BYPASS_TOKEN=<local-dev-token>
+```
+
+The bypass is disabled when `VITE_EXTENSION_ENVIRONMENT=production`. Without `VITE_DEV_AUTH_BYPASS_TOKEN`, the UI can open but protected backend calls may still fail with `401`, which is useful when testing unauthenticated/error states.
+
 ## First Implementation Milestone
 
 1. Add Supabase auth config and client. Done.

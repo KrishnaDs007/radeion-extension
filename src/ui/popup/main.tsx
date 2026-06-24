@@ -4,9 +4,10 @@ import { renderApp } from "@/app/renderApp";
 import { useAuthSession } from "@/shared/auth/useAuthSession";
 import { Button } from "@/shared/components/Button";
 import { StatusPill } from "@/shared/components/StatusPill";
+import { getAppVersion } from "@/shared/config/appVersion";
 
 function PopupApp() {
-  const { isConfigured, isLoading, user } = useAuthSession();
+  const { isConfigured, isDeveloperBypass, isLoading, user } = useAuthSession();
   const sessionLabel = isLoading ? "Checking" : user ? user.email ?? "Signed in" : "Not connected";
 
   function openExtensionPage(path: string) {
@@ -32,6 +33,16 @@ function PopupApp() {
           <span>Current site</span>
           <strong>Pending config</strong>
         </div>
+        <div className="info-row">
+          <span>Version</span>
+          <strong>{getAppVersion()}</strong>
+        </div>
+        {isDeveloperBypass ? (
+          <div className="info-row">
+            <span>Auth mode</span>
+            <strong>Developer bypass</strong>
+          </div>
+        ) : null}
       </section>
 
       <section className="action-grid">

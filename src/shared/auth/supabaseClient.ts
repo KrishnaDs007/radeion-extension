@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-import { appConfig } from "@/shared/config/env";
+import { appConfig, isDeveloperAuthBypassEnabled } from "@/shared/config/env";
 
 export const isSupabaseConfigured =
   appConfig.supabaseUrl.length > 0 && appConfig.supabasePublishableKey.length > 0;
@@ -16,6 +16,10 @@ export const supabase = isSupabaseConfigured
   : null;
 
 export async function getAccessToken() {
+  if (isDeveloperAuthBypassEnabled && appConfig.devAuthBypassToken) {
+    return appConfig.devAuthBypassToken;
+  }
+
   if (!supabase) {
     return null;
   }

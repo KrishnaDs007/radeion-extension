@@ -1,2 +1,0 @@
-chrome.runtime.onInstalled.addListener(()=>{console.info(`Radeion extension installed.`)}),chrome.runtime.onMessage.addListener((e,t,n)=>e?.type===`RADEION_HEALTH_CHECK`?(n({ok:!0}),!0):!1);
-//# sourceMappingURL=service-worker.ts-DX2PVMhM.js.map

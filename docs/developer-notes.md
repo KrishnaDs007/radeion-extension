@@ -52,6 +52,32 @@ VITE_EXTENSION_ENVIRONMENT=local
 
 Do not put backend secrets in frontend env files.
 
+Optional local-only frontend auth bypass:
+
+```text
+VITE_DEV_AUTH_BYPASS_EMAIL=developer@example.com
+VITE_DEV_AUTH_BYPASS_NAME=Developer
+VITE_DEV_AUTH_BYPASS_TOKEN=
+```
+
+The bypass only activates when `VITE_EXTENSION_ENVIRONMENT` is not `production` and `VITE_DEV_AUTH_BYPASS_EMAIL` is provided. `VITE_DEV_AUTH_BYPASS_TOKEN` is optional; without it, protected backend routes can still return `401`.
+
+## Version Checks
+
+Current source version:
+
+```bash
+npm pkg get version
+```
+
+Built extension version:
+
+```bash
+npm run build
+```
+
+Then check `dist/manifest.json` and confirm the `version` field. Inside the extension UI, the popup and dashboard show the runtime version from Chrome's manifest when available.
+
 ## Current Progress
 
 - Project scaffold exists around multiple Chrome extension entry points.

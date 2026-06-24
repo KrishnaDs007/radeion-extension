@@ -1,2 +1,0 @@
-import{n as e}from"./renderApp-nbsssCqs.js";var t=e();function n({label:e,tone:n=`neutral`}){return(0,t.jsx)(`span`,{className:`status-pill status-pill-${n}`,children:e})}export{n as t};
-//# sourceMappingURL=StatusPill-QYQZO9TW.js.map

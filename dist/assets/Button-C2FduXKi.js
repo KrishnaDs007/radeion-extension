@@ -1,2 +1,0 @@
-import{n as e}from"./renderApp-nbsssCqs.js";var t=e();function n({children:e,className:n=``,variant:r=`primary`,...i}){return(0,t.jsx)(`button`,{className:`button button-${r} ${n}`.trim(),...i,children:e})}export{n as t};
-//# sourceMappingURL=Button-C2FduXKi.js.map

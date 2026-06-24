@@ -20,14 +20,14 @@
   "content_scripts": [
     {
       "js": [
-        "assets/index.tsx-loader-yVYGKKUF.js"
+        "assets/index.tsx-loader-ChXTS46G.js"
       ],
       "matches": [
         "https://example-healthcare-app.invalid/*"
       ],
       "run_at": "document_idle",
       "css": [
-        "assets/renderApp-D94qJf5e.css"
+        "assets/renderApp-DTZHS7iA.css"
       ]
     }
   ],
@@ -38,16 +38,18 @@
       ],
       "resources": [
         "assets/*",
-        "assets/renderApp-nbsssCqs.js",
-        "assets/renderApp-nbsssCqs.js.map",
-        "assets/createLucideIcon-CYuvbn3l.js",
-        "assets/createLucideIcon-CYuvbn3l.js.map",
-        "assets/Button-C2FduXKi.js",
-        "assets/Button-C2FduXKi.js.map",
-        "assets/StatusPill-QYQZO9TW.js",
-        "assets/StatusPill-QYQZO9TW.js.map",
-        "assets/index.tsx-Ck4LScKw.js",
-        "assets/index.tsx-Ck4LScKw.js.map"
+        "assets/renderApp-CfJNRvys.js",
+        "assets/renderApp-CfJNRvys.js.map",
+        "assets/createLucideIcon-SbsEQPBJ.js",
+        "assets/createLucideIcon-SbsEQPBJ.js.map",
+        "assets/patientTabs-0l4Ke7be.js",
+        "assets/patientTabs-0l4Ke7be.js.map",
+        "assets/Button-SZNNARDm.js",
+        "assets/Button-SZNNARDm.js.map",
+        "assets/StatusPill-C07Alrag.js",
+        "assets/StatusPill-C07Alrag.js.map",
+        "assets/index.tsx-4ahSD9xs.js",
+        "assets/index.tsx-4ahSD9xs.js.map"
       ],
       "use_dynamic_url": false
     }
