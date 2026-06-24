@@ -1,10 +1,18 @@
 import { LogIn, PanelRightOpen, Search } from "lucide-react";
 
 import { renderApp } from "@/app/renderApp";
+import { useAuthSession } from "@/shared/auth/useAuthSession";
 import { Button } from "@/shared/components/Button";
 import { StatusPill } from "@/shared/components/StatusPill";
 
 function PopupApp() {
+  const { isConfigured, isLoading, user } = useAuthSession();
+  const sessionLabel = isLoading ? "Checking" : user ? user.email ?? "Signed in" : "Not connected";
+
+  function openExtensionPage(path: string) {
+    window.location.href = path;
+  }
+
   return (
     <main className="popup-shell">
       <header className="compact-header">
@@ -12,13 +20,13 @@ function PopupApp() {
           <p className="eyebrow">Radeion</p>
           <h1>Extension</h1>
         </div>
-        <StatusPill label="Local" />
+        <StatusPill label={isConfigured ? "Ready" : "Config"} tone={isConfigured ? "success" : "warning"} />
       </header>
 
       <section className="stack">
         <div className="info-row">
           <span>Session</span>
-          <strong>Not connected</strong>
+          <strong>{sessionLabel}</strong>
         </div>
         <div className="info-row">
           <span>Current site</span>
@@ -27,15 +35,15 @@ function PopupApp() {
       </section>
 
       <section className="action-grid">
-        <Button>
+        <Button onClick={() => openExtensionPage(user ? "../dashboard/index.html" : "../login/index.html")}>
           <LogIn size={16} />
-          Login
+          {user ? "Home" : "Login"}
         </Button>
-        <Button variant="secondary">
+        <Button onClick={() => openExtensionPage("../dashboard/index.html")} variant="secondary">
           <PanelRightOpen size={16} />
           Open Panel
         </Button>
-        <Button variant="secondary">
+        <Button onClick={() => openExtensionPage("../dashboard/index.html")} variant="secondary">
           <Search size={16} />
           Search
         </Button>

@@ -73,6 +73,11 @@ p {
   padding: 8px 14px;
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
 .button-primary {
   background: #176b87;
   color: white;
@@ -216,6 +221,12 @@ p {
   padding: 6px;
 }
 
+.tab-button-active,
+.sidebar-item-active {
+  background: #dff1f4;
+  border-color: #8dc3ce;
+}
+
 .panel-body {
   border-top: 1px solid #edf2f5;
   padding-top: 14px;
@@ -273,6 +284,62 @@ p {
   width: 100%;
 }
 
+.search-panel {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+}
+
+.search-panel .form-message {
+  grid-column: 1 / -1;
+}
+
+.form-message {
+  color: #526472;
+}
+
+.text-link {
+  color: #176b87;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-prompt {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dce5eb;
+  border-radius: 8px;
+  bottom: 24px;
+  box-shadow: 0 16px 48px rgb(23 32 38 / 16%);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  max-width: calc(100vw - 32px);
+  padding: 12px;
+  position: fixed;
+  right: 24px;
+  width: 340px;
+  z-index: 2147483647;
+}
+
+.result-list {
+  display: grid;
+  gap: 8px;
+}
+
+.result-item {
+  background: #f6f8fa;
+  border: 1px solid #e2e8ee;
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.result-item span {
+  color: #526472;
+}
+
 label {
   color: #263741;
   display: grid;
@@ -295,6 +362,10 @@ textarea {
   }
 
   .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .search-panel {
     grid-template-columns: 1fr;
   }
 

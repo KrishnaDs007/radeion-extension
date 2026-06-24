@@ -18,8 +18,13 @@ export default [
       globals: {
         chrome: "readonly",
         document: "readonly",
+        fetch: "readonly",
+        Headers: "readonly",
         window: "readonly",
         HTMLElement: "readonly",
+        Location: "readonly",
+        process: "readonly",
+        URLSearchParams: "readonly",
         console: "readonly",
       },
     },
