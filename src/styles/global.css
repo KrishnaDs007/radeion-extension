@@ -10,6 +10,12 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -47,7 +53,9 @@ p {
 
 .page-shell {
   min-height: 100vh;
-  padding: 32px;
+  overflow-x: hidden;
+  padding: clamp(16px, 5vw, 32px);
+  width: 100%;
 }
 
 .page-header {
@@ -55,11 +63,15 @@ p {
   gap: 8px;
   margin: 0 auto 24px;
   max-width: 1100px;
+  min-width: 0;
+  width: 100%;
 }
 
 .page-header h1 {
-  font-size: 2rem;
+  font-size: clamp(2rem, 8vw, 2.6rem);
   letter-spacing: 0;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
 }
 
 .button {
@@ -99,7 +111,10 @@ p {
   display: inline-flex;
   font-size: 0.75rem;
   font-weight: 700;
+  max-width: 100%;
+  overflow: hidden;
   padding: 4px 9px;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -135,11 +150,24 @@ p {
   display: flex;
   justify-content: space-between;
   gap: 12px;
+  min-width: 0;
+}
+
+.workspace-header {
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .compact-header h1,
 .floating-panel-header h2 {
   font-size: 1.15rem;
+}
+
+.panel-drag-region {
+  cursor: move;
+  flex: 1;
+  min-width: 0;
+  user-select: none;
 }
 
 .stack,
@@ -175,7 +203,7 @@ p {
   max-height: calc(100vh - 16px);
   max-width: calc(100vw - 16px);
   min-height: 360px;
-  min-width: 340px;
+  min-width: min(340px, calc(100vw - 16px));
   overflow: hidden;
   padding: 14px;
   position: fixed;
@@ -184,7 +212,9 @@ p {
 
 .icon-button-row {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 6px;
+  min-width: 0;
 }
 
 .icon-button {
@@ -230,6 +260,14 @@ p {
   padding: 8px 10px;
 }
 
+.context-strip span,
+.info-row strong,
+.info-row span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .tab-list {
   display: grid;
   gap: 6px;
@@ -273,11 +311,14 @@ p {
   grid-template-columns: 260px minmax(0, 1fr);
   margin: 0 auto;
   max-width: 1100px;
+  min-width: 0;
+  width: 100%;
 }
 
 .sidebar {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 
 .sidebar-item {
@@ -300,7 +341,9 @@ p {
   border-radius: 8px;
   display: grid;
   gap: 16px;
+  min-width: 0;
   padding: 20px;
+  width: 100%;
 }
 
 .form-card {
@@ -343,7 +386,7 @@ p {
   padding: 12px;
   position: fixed;
   right: 24px;
-  width: 340px;
+  width: min(340px, calc(100vw - 32px));
   z-index: 2147483647;
 }
 
@@ -365,6 +408,14 @@ p {
   color: #526472;
 }
 
+.workspace h2,
+.workspace h3,
+.workspace p,
+.result-item strong,
+.result-item span {
+  overflow-wrap: anywhere;
+}
+
 label {
   color: #263741;
   display: grid;
@@ -383,7 +434,7 @@ textarea {
 
 @media (max-width: 760px) {
   .page-shell {
-    padding: 20px;
+    padding: 20px 16px;
   }
 
   .dashboard-layout {
@@ -396,5 +447,24 @@ textarea {
 
   .tab-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 430px) {
+  .page-shell {
+    padding: 18px 12px;
+  }
+
+  .workspace,
+  .form-card {
+    padding: 16px;
+  }
+
+  .workspace-header .icon-button-row {
+    width: 100%;
+  }
+
+  .workspace-header .status-pill {
+    max-width: 100%;
   }
 }

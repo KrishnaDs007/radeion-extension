@@ -1,11 +1,12 @@
 import { ExternalLink, Grip, Maximize2, Move, Minus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 
 import { Button } from "@/shared/components/Button";
 import { StatusPill } from "@/shared/components/StatusPill";
 import type { PatientTabId } from "@/shared/patient/patientTabs";
 import { patientTabs } from "@/shared/patient/patientTabs";
+import { getStoredUiState, saveUiState } from "@/shared/storage/uiState";
 import type { SiteContext } from "@/shared/types/siteContext";
 
 type FloatingPanelAppProps = {
@@ -22,23 +23,44 @@ type PanelFrame = {
 };
 
 const defaultFrame: PanelFrame = {
-  x: 24,
-  y: 24,
+  x: window.innerWidth - 420 - 24,
+  y: window.innerHeight - 560 - 24,
   width: 420,
   height: 560,
 };
 
+const minFrameWidth = 320;
+const minFrameHeight = 320;
+const viewportPadding = 8;
+
 function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
+  return Math.min(Math.max(value, min), Math.max(min, max));
+}
+
+function getViewportFrame(frame: PanelFrame): PanelFrame {
+  const width = clamp(frame.width, minFrameWidth, window.innerWidth - viewportPadding * 2);
+  const height = clamp(frame.height, minFrameHeight, window.innerHeight - viewportPadding * 2);
+
+  return {
+    width,
+    height,
+    x: clamp(frame.x, viewportPadding, window.innerWidth - width - viewportPadding),
+    y: clamp(frame.y, viewportPadding, window.innerHeight - height - viewportPadding),
+  };
+}
+
+function getDefaultViewportFrame() {
+  return getViewportFrame({
+    ...defaultFrame,
+    x: window.innerWidth - defaultFrame.width - defaultFrame.x,
+    y: window.innerHeight - defaultFrame.height - defaultFrame.y,
+  });
 }
 
 export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanelAppProps) {
   const [selectedTab, setSelectedTab] = useState<PatientTabId>("home");
-  const [frame, setFrame] = useState<PanelFrame>(() => ({
-    ...defaultFrame,
-    x: Math.max(window.innerWidth - defaultFrame.width - defaultFrame.x, 16),
-    y: Math.max(window.innerHeight - defaultFrame.height - defaultFrame.y, 16),
-  }));
+  const [frame, setFrame] = useState<PanelFrame>(() => getDefaultViewportFrame());
+  const [hasLoadedStoredFrame, setHasLoadedStoredFrame] = useState(false);
   const selectedTabDefinition = patientTabs.find((tab) => tab.id === selectedTab) ?? patientTabs[0];
   const patientStatus = context?.detectedPatientId
     ? `Patient ${context.detectedPatientId}`
@@ -50,7 +72,42 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
     width: frame.width,
   };
 
-  function startDrag(event: PointerEvent<HTMLButtonElement>) {
+  useEffect(() => {
+    let isMounted = true;
+
+    getStoredUiState().then((uiState) => {
+      if (!isMounted) {
+        return;
+      }
+
+      setFrame(getViewportFrame(uiState));
+
+      if (patientTabs.some((tab) => tab.id === uiState.selectedTab)) {
+        setSelectedTab(uiState.selectedTab as PatientTabId);
+      }
+
+      setHasLoadedStoredFrame(true);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedStoredFrame) {
+      return;
+    }
+
+    saveUiState({
+      ...frame,
+      isMinimized: false,
+      selectedTab,
+      lastOpenedAt: new Date().toISOString(),
+    });
+  }, [frame, hasLoadedStoredFrame, selectedTab]);
+
+  function startDrag(event: PointerEvent<HTMLElement>) {
     const startX = event.clientX;
     const startY = event.clientY;
     const startFrame = frame;
@@ -60,8 +117,16 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
     function onPointerMove(moveEvent: globalThis.PointerEvent) {
       setFrame((currentFrame) => ({
         ...currentFrame,
-        x: clamp(startFrame.x + moveEvent.clientX - startX, 8, window.innerWidth - currentFrame.width - 8),
-        y: clamp(startFrame.y + moveEvent.clientY - startY, 8, window.innerHeight - currentFrame.height - 8),
+        x: clamp(
+          startFrame.x + moveEvent.clientX - startX,
+          viewportPadding,
+          window.innerWidth - currentFrame.width - viewportPadding,
+        ),
+        y: clamp(
+          startFrame.y + moveEvent.clientY - startY,
+          viewportPadding,
+          window.innerHeight - currentFrame.height - viewportPadding,
+        ),
       }));
     }
 
@@ -74,7 +139,7 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
     window.addEventListener("pointerup", onPointerUp);
   }
 
-  function startResize(event: PointerEvent<HTMLButtonElement>) {
+  function startResize(event: PointerEvent<HTMLElement>) {
     const startX = event.clientX;
     const startY = event.clientY;
     const startFrame = frame;
@@ -84,8 +149,16 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
     function onPointerMove(moveEvent: globalThis.PointerEvent) {
       setFrame((currentFrame) => ({
         ...currentFrame,
-        width: clamp(startFrame.width + moveEvent.clientX - startX, 340, window.innerWidth - currentFrame.x - 8),
-        height: clamp(startFrame.height + moveEvent.clientY - startY, 360, window.innerHeight - currentFrame.y - 8),
+        width: clamp(
+          startFrame.width + moveEvent.clientX - startX,
+          minFrameWidth,
+          window.innerWidth - currentFrame.x - viewportPadding,
+        ),
+        height: clamp(
+          startFrame.height + moveEvent.clientY - startY,
+          minFrameHeight,
+          window.innerHeight - currentFrame.y - viewportPadding,
+        ),
       }));
     }
 
@@ -99,17 +172,22 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
   }
 
   function resetFrame() {
-    setFrame({
-      ...defaultFrame,
-      x: Math.max(window.innerWidth - defaultFrame.width - defaultFrame.x, 16),
-      y: Math.max(window.innerHeight - defaultFrame.height - defaultFrame.y, 16),
-    });
+    setFrame(getDefaultViewportFrame());
+  }
+
+  function openDashboard() {
+    if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
+      window.open(chrome.runtime.getURL("src/ui/dashboard/index.html"), "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    window.open("../dashboard/index.html", "_blank", "noopener,noreferrer");
   }
 
   return (
     <section className="floating-panel" style={panelStyle} aria-label="Radeion healthcare companion">
       <header className="floating-panel-header">
-        <div>
+        <div className="panel-drag-region" onPointerDown={startDrag} role="presentation">
           <p className="eyebrow">Radeion</p>
           <h2>Patient Workspace</h2>
         </div>
@@ -123,10 +201,22 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
           >
             <Move size={16} />
           </button>
-          <button className="icon-button" onClick={resetFrame} type="button" aria-label="Reset panel size" title="Reset size">
+          <button
+            className="icon-button"
+            onClick={resetFrame}
+            type="button"
+            aria-label="Reset panel size"
+            title="Reset size"
+          >
             <Maximize2 size={16} />
           </button>
-          <button className="icon-button" type="button" aria-label="Open dashboard" title="Open dashboard">
+          <button
+            className="icon-button"
+            onClick={openDashboard}
+            type="button"
+            aria-label="Open dashboard"
+            title="Open dashboard"
+          >
             <ExternalLink size={16} />
           </button>
           <button className="icon-button" onClick={onMinimize} type="button" aria-label="Minimize panel" title="Minimize">

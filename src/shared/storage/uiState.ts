@@ -14,6 +14,39 @@ export const defaultUiState: ExtensionUiState = {
   width: 420,
   height: 560,
   isMinimized: false,
-  selectedTab: "summary",
+  selectedTab: "home",
   lastOpenedAt: "",
 };
+
+const uiStateKey = "radeion:uiState";
+
+function isChromeStorageAvailable() {
+  return typeof chrome !== "undefined" && Boolean(chrome.storage?.local);
+}
+
+export async function getStoredUiState(): Promise<ExtensionUiState> {
+  if (isChromeStorageAvailable()) {
+    const result = await chrome.storage.local.get(uiStateKey);
+    return {
+      ...defaultUiState,
+      ...((result[uiStateKey] as Partial<ExtensionUiState> | undefined) ?? {}),
+    };
+  }
+
+  const rawValue = window.localStorage.getItem(uiStateKey);
+  return rawValue
+    ? {
+        ...defaultUiState,
+        ...(JSON.parse(rawValue) as Partial<ExtensionUiState>),
+      }
+    : defaultUiState;
+}
+
+export async function saveUiState(uiState: ExtensionUiState) {
+  if (isChromeStorageAvailable()) {
+    await chrome.storage.local.set({ [uiStateKey]: uiState });
+    return;
+  }
+
+  window.localStorage.setItem(uiStateKey, JSON.stringify(uiState));
+}
