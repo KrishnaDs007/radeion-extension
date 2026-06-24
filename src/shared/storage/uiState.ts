@@ -4,6 +4,8 @@ export type ExtensionUiState = {
   width: number;
   height: number;
   isMinimized: boolean;
+  promptX: number;
+  promptY: number;
   selectedTab: string;
   lastOpenedAt: string;
 };
@@ -14,6 +16,8 @@ export const defaultUiState: ExtensionUiState = {
   width: 420,
   height: 560,
   isMinimized: false,
+  promptX: 24,
+  promptY: 24,
   selectedTab: "home",
   lastOpenedAt: "",
 };

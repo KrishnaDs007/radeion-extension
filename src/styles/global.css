@@ -377,7 +377,6 @@ p {
   background: #ffffff;
   border: 1px solid #dce5eb;
   border-radius: 8px;
-  bottom: 24px;
   box-shadow: 0 16px 48px rgb(23 32 38 / 16%);
   display: flex;
   gap: 16px;
@@ -385,8 +384,30 @@ p {
   max-width: calc(100vw - 32px);
   padding: 12px;
   position: fixed;
-  right: 24px;
   width: min(340px, calc(100vw - 32px));
+  z-index: 2147483647;
+}
+
+.site-prompt-drag {
+  cursor: move;
+  flex: 1;
+  min-width: 0;
+  user-select: none;
+}
+
+.site-dock {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dce5eb;
+  border-radius: 999px;
+  box-shadow: 0 12px 32px rgb(23 32 38 / 16%);
+  color: #173646;
+  display: inline-flex;
+  font-weight: 700;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 14px;
+  position: fixed;
   z-index: 2147483647;
 }
 

@@ -102,6 +102,8 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
     saveUiState({
       ...frame,
       isMinimized: false,
+      promptX: viewportPadding,
+      promptY: viewportPadding,
       selectedTab,
       lastOpenedAt: new Date().toISOString(),
     });
@@ -175,6 +177,30 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
     setFrame(getDefaultViewportFrame());
   }
 
+  async function minimizePanel() {
+    await saveUiState({
+      ...frame,
+      isMinimized: true,
+      promptX: viewportPadding,
+      promptY: viewportPadding,
+      selectedTab,
+      lastOpenedAt: new Date().toISOString(),
+    });
+    onMinimize?.();
+  }
+
+  async function closePanel() {
+    await saveUiState({
+      ...frame,
+      isMinimized: false,
+      promptX: viewportPadding,
+      promptY: viewportPadding,
+      selectedTab,
+      lastOpenedAt: new Date().toISOString(),
+    });
+    onClose?.();
+  }
+
   function openDashboard() {
     if (typeof chrome !== "undefined" && chrome.runtime?.getURL) {
       window.open(chrome.runtime.getURL("src/ui/dashboard/index.html"), "_blank", "noopener,noreferrer");
@@ -219,10 +245,10 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
           >
             <ExternalLink size={16} />
           </button>
-          <button className="icon-button" onClick={onMinimize} type="button" aria-label="Minimize panel" title="Minimize">
+          <button className="icon-button" onClick={minimizePanel} type="button" aria-label="Minimize panel" title="Minimize">
             <Minus size={16} />
           </button>
-          <button className="icon-button" onClick={onClose} type="button" aria-label="Close panel" title="Close">
+          <button className="icon-button" onClick={closePanel} type="button" aria-label="Close panel" title="Close">
             <X size={16} />
           </button>
         </div>
