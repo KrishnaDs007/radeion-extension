@@ -163,11 +163,9 @@ p {
   font-size: 1.15rem;
 }
 
-.panel-drag-region {
-  cursor: move;
+.panel-heading {
   flex: 1;
   min-width: 0;
-  user-select: none;
 }
 
 .stack,
@@ -227,6 +225,16 @@ p {
   height: 32px;
   justify-content: center;
   width: 32px;
+}
+
+.icon-button[aria-label^="Move"] {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.icon-button[aria-label^="Move"]:active {
+  cursor: grabbing;
 }
 
 .icon-button:hover,
@@ -388,11 +396,9 @@ p {
   z-index: 2147483647;
 }
 
-.site-prompt-drag {
-  cursor: move;
+.site-prompt-copy {
   flex: 1;
   min-width: 0;
-  user-select: none;
 }
 
 .site-dock {

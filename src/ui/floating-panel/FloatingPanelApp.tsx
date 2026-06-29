@@ -23,8 +23,8 @@ type PanelFrame = {
 };
 
 const defaultFrame: PanelFrame = {
-  x: window.innerWidth - 420 - 24,
-  y: window.innerHeight - 560 - 24,
+  x: 24,
+  y: 24,
   width: 420,
   height: 560,
 };
@@ -52,8 +52,8 @@ function getViewportFrame(frame: PanelFrame): PanelFrame {
 function getDefaultViewportFrame() {
   return getViewportFrame({
     ...defaultFrame,
-    x: window.innerWidth - defaultFrame.width - defaultFrame.x,
-    y: window.innerHeight - defaultFrame.height - defaultFrame.y,
+    x: window.innerWidth - defaultFrame.width - 24,
+    y: window.innerHeight - defaultFrame.height - 24,
   });
 }
 
@@ -99,17 +99,35 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
       return;
     }
 
-    saveUiState({
-      ...frame,
-      isMinimized: false,
-      promptX: viewportPadding,
-      promptY: viewportPadding,
-      selectedTab,
-      lastOpenedAt: new Date().toISOString(),
-    });
+    const saveTimer = window.setTimeout(() => {
+      void saveUiState({
+        ...frame,
+        isMinimized: false,
+        promptX: viewportPadding,
+        promptY: viewportPadding,
+        selectedTab,
+        lastOpenedAt: new Date().toISOString(),
+      });
+    }, 150);
+
+    return () => window.clearTimeout(saveTimer);
   }, [frame, hasLoadedStoredFrame, selectedTab]);
 
+  useEffect(() => {
+    function keepPanelInViewport() {
+      setFrame((currentFrame) => getViewportFrame(currentFrame));
+    }
+
+    window.addEventListener("resize", keepPanelInViewport);
+    return () => window.removeEventListener("resize", keepPanelInViewport);
+  }, []);
+
   function startDrag(event: PointerEvent<HTMLElement>) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
     const startX = event.clientX;
     const startY = event.clientY;
     const startFrame = frame;
@@ -132,16 +150,23 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
       }));
     }
 
-    function onPointerUp() {
+    function stopDragging() {
       window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointerup", stopDragging);
+      window.removeEventListener("pointercancel", stopDragging);
     }
 
     window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointerup", stopDragging);
+    window.addEventListener("pointercancel", stopDragging);
   }
 
   function startResize(event: PointerEvent<HTMLElement>) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
     const startX = event.clientX;
     const startY = event.clientY;
     const startFrame = frame;
@@ -164,13 +189,15 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
       }));
     }
 
-    function onPointerUp() {
+    function stopResizing() {
       window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointerup", stopResizing);
+      window.removeEventListener("pointercancel", stopResizing);
     }
 
     window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointerup", stopResizing);
+    window.addEventListener("pointercancel", stopResizing);
   }
 
   function resetFrame() {
@@ -213,7 +240,7 @@ export function FloatingPanelApp({ context, onClose, onMinimize }: FloatingPanel
   return (
     <section className="floating-panel" style={panelStyle} aria-label="Radeion healthcare companion">
       <header className="floating-panel-header">
-        <div className="panel-drag-region" onPointerDown={startDrag} role="presentation">
+        <div className="panel-heading">
           <p className="eyebrow">Radeion</p>
           <h2>Patient Workspace</h2>
         </div>

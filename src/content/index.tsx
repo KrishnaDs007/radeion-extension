@@ -1,5 +1,5 @@
 import { FloatingPanelApp } from "@/ui/floating-panel/FloatingPanelApp";
-import { renderApp } from "@/app/renderApp";
+import { renderContentApp } from "@/app/renderContentApp";
 import { Button } from "@/shared/components/Button";
 import { detectSiteContext } from "@/shared/site/supportedSites";
 import { getStoredUiState, saveUiState } from "@/shared/storage/uiState";
@@ -76,6 +76,18 @@ function ContentApp() {
     );
   }, [hasLoadedUiState, isMinimized, isOpen, promptFrame]);
 
+  useEffect(() => {
+    function keepPromptInViewport() {
+      setPromptFrame((currentFrame) => ({
+        x: clamp(currentFrame.x, promptPadding, window.innerWidth - promptWidth - promptPadding),
+        y: clamp(currentFrame.y, promptPadding, window.innerHeight - promptHeight - promptPadding),
+      }));
+    }
+
+    window.addEventListener("resize", keepPromptInViewport);
+    return () => window.removeEventListener("resize", keepPromptInViewport);
+  }, []);
+
   function openPanel() {
     setIsMinimized(false);
     setIsOpen(true);
@@ -87,6 +99,11 @@ function ContentApp() {
   }
 
   function startPromptDrag(event: PointerEvent<HTMLElement>) {
+    if (event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
     const startX = event.clientX;
     const startY = event.clientY;
     const startFrame = promptFrame;
@@ -108,13 +125,15 @@ function ContentApp() {
       });
     }
 
-    function onPointerUp() {
+    function stopDragging() {
       window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointerup", stopDragging);
+      window.removeEventListener("pointercancel", stopDragging);
     }
 
     window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointerup", stopDragging);
+    window.addEventListener("pointercancel", stopDragging);
   }
 
   if (isClosed) {
@@ -142,7 +161,7 @@ function ContentApp() {
 
   return (
     <section className="site-prompt" style={promptStyle} aria-label="Radeion companion prompt">
-      <div className="site-prompt-drag" onPointerDown={startPromptDrag} role="presentation">
+      <div className="site-prompt-copy">
         <p className="eyebrow">Radeion</p>
         <strong>{context.status === "supported" ? "Patient context available" : "Search available"}</strong>
       </div>
@@ -176,7 +195,7 @@ function mountFloatingPanel() {
   host.id = hostId;
   document.documentElement.append(host);
 
-  renderApp(host, <ContentApp />);
+  renderContentApp(host, <ContentApp />);
 }
 
 mountFloatingPanel();

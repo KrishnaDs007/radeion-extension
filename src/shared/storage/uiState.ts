@@ -38,12 +38,19 @@ export async function getStoredUiState(): Promise<ExtensionUiState> {
   }
 
   const rawValue = window.localStorage.getItem(uiStateKey);
-  return rawValue
-    ? {
-        ...defaultUiState,
-        ...(JSON.parse(rawValue) as Partial<ExtensionUiState>),
-      }
-    : defaultUiState;
+  if (!rawValue) {
+    return defaultUiState;
+  }
+
+  try {
+    return {
+      ...defaultUiState,
+      ...(JSON.parse(rawValue) as Partial<ExtensionUiState>),
+    };
+  } catch {
+    window.localStorage.removeItem(uiStateKey);
+    return defaultUiState;
+  }
 }
 
 export async function saveUiState(uiState: ExtensionUiState) {

@@ -28,7 +28,16 @@ export async function getPatientBasicMetadata(): Promise<PatientBasicMetadata | 
   }
 
   const rawValue = window.localStorage.getItem(storageKey);
-  return rawValue ? (JSON.parse(rawValue) as PatientBasicMetadata) : null;
+  if (!rawValue) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rawValue) as PatientBasicMetadata;
+  } catch {
+    window.localStorage.removeItem(storageKey);
+    return null;
+  }
 }
 
 export async function clearPatientBasicMetadata() {
